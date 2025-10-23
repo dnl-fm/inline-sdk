@@ -1,0 +1,47 @@
+{
+  "name": "@dnl-fm/inline-sdk",
+  "version": "0.1.2",
+  "description": "TypeScript SDK for Inline message queue API",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "bun test",
+    "type-check": "tsc --noEmit",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --fix .",
+    "format": "biome format .",
+    "format:fix": "biome format --write .",
+    "quality": "bun run type-check && bun run lint && bun run format:fix && bun test"
+  },
+  "keywords": [
+    "queue",
+    "message-queue",
+    "sdk",
+    "typescript",
+    "inline"
+  ],
+  "author": "Tino Ehrich",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dnl-fm/inline-sdk.git",
+    "directory": "sdk"
+  },
+  "homepage": "https://github.com/dnl-fm/inline-sdk",
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.6",
+    "@types/bun": "latest",
+    "bun-types": "latest",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "zod": "^3"
+  }
+}
