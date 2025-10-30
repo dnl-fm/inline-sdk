@@ -132,6 +132,12 @@ export const MessageResponseSchema: z.ZodObject<any> = z.object({
     .int()
     .optional()
     .describe("Current attempt number"),
+  eventCount: z
+    .number()
+    .int()
+    .nonnegative()
+    .optional()
+    .describe("Number of timeline events"),
 });
 
 export type MessageResponse = z.infer<typeof MessageResponseSchema>;
