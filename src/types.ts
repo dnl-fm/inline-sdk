@@ -81,46 +81,46 @@ export type CallbackHeaders = Record<string, string>;
  * Contains all metadata about a queued message
  *
  * @property {string} id - ULID-based unique message identifier (format: message_[0-7][0-9A-HJKMNP-TV-Z]{25})
- * @property {string} callbackUrl - Target URL where message will be delivered via HTTP POST
+ * @property {string} callback_url - Target URL where message will be delivered via HTTP POST
  * @property {MessagePayload} payload - Message data (JSON serializable object)
- * @property {CallbackHeaders} callbackHeaders - HTTP headers to forward with callback request
+ * @property {CallbackHeaders} callback_headers - HTTP headers to forward with callback request
  * @property {MessageStatus} status - Current message status in the lifecycle
- * @property {string} createdAt - ISO 8601 timestamp when message was created
- * @property {string} updatedAt - ISO 8601 timestamp of last status change
- * @property {string} [scheduledAt] - ISO 8601 timestamp when message is scheduled for processing
- * @property {number} retryCount - Number of delivery attempts made so far
- * @property {number} maxRetries - Maximum number of retries allowed before dead letter
- * @property {string} [nextRetryAt] - ISO 8601 timestamp of next scheduled retry attempt
- * @property {CallbackError} [lastError] - Details of the most recent callback error
+ * @property {string} created_at - ISO 8601 timestamp when message was created
+ * @property {string} updated_at - ISO 8601 timestamp of last status change
+ * @property {string} [scheduled_at] - ISO 8601 timestamp when message is scheduled for processing
+ * @property {number} retry_count - Number of delivery attempts made so far
+ * @property {number} max_retries - Maximum number of retries allowed before dead letter
+ * @property {string} [next_retry_at] - ISO 8601 timestamp of next scheduled retry attempt
+ * @property {CallbackError} [last_error] - Details of the most recent callback error
  * @property {string} [timezone] - Timezone used for scheduled message processing
- * @property {number} [attemptNumber] - Current attempt number in the retry sequence
+ * @property {number} [attempt_number] - Current attempt number in the retry sequence
  */
 export interface MessageResponse {
   id: string;
-  callbackUrl: string;
+  callback_url: string;
   payload: MessagePayload;
-  callbackHeaders: CallbackHeaders;
+  callback_headers: CallbackHeaders;
   status: MessageStatus;
-  createdAt: string;
-  updatedAt: string;
-  scheduledAt?: string;
-  retryCount: number;
-  maxRetries: number;
-  nextRetryAt?: string;
-  lastError?: CallbackError;
+  created_at: string;
+  updated_at: string;
+  scheduled_at?: string;
+  retry_count: number;
+  max_retries: number;
+  next_retry_at?: string;
+  last_error?: CallbackError;
   timezone?: string;
-  attemptNumber?: number;
+  attempt_number?: number;
 }
 
 /**
  * Response from publishing a message
  * @property {string} id - ULID-based unique identifier of the created message
- * @property {string} createdAt - ISO 8601 timestamp of message creation
+ * @property {string} created_at - ISO 8601 timestamp of message creation
  * @property {string} timezone - IANA timezone used for scheduling (default: "UTC")
  */
 export interface CreateMessageResponse {
   id: string;
-  createdAt: string;
+  created_at: string;
   timezone: string;
 }
 
@@ -152,13 +152,13 @@ export interface MessageEvent {
  * Timeline history for a message
  * Contains the chronological list of events for a specific message
  *
- * @property {string} messageId - ID of the message
- * @property {number} eventCount - Total number of events in the timeline
+ * @property {string} message_id - ID of the message
+ * @property {number} event_count - Total number of events in the timeline
  * @property {MessageEvent[]} events - Chronological list of events for the message
  */
 export interface TimelineResponse {
-  messageId: string;
-  eventCount: number;
+  message_id: string;
+  event_count: number;
   events: MessageEvent[];
 }
 
@@ -167,12 +167,12 @@ export interface TimelineResponse {
  * Confirmation that a message was successfully queued for retry
  *
  * @property {boolean} success - Whether the retry was successfully queued
- * @property {string} messageId - ULID of the retried message
+ * @property {string} message_id - ULID of the retried message
  * @property {string} message - Confirmation or error message
  */
 export interface RetryMessageResponse {
   success: boolean;
-  messageId: string;
+  message_id: string;
   message: string;
 }
 
@@ -243,23 +243,23 @@ export interface HealthStatus {
  * Captures details about why a callback attempt failed
  *
  * @property {string} id - Unique error identifier
- * @property {string} messageId - ULID of the message that failed
- * @property {ErrorCode} errorCode - Machine-readable error classification
- * @property {string} errorMessage - Human-readable error description
- * @property {number} [httpStatusCode] - HTTP status code if response was received
- * @property {string} createdAt - ISO 8601 timestamp when error occurred
- * @property {number} [attemptNumber] - Which retry attempt this error occurred on
- * @property {number} [durationMs] - How long the failed request took in milliseconds
+ * @property {string} message_id - ULID of the message that failed
+ * @property {ErrorCode} error_code - Machine-readable error classification
+ * @property {string} error_message - Human-readable error description
+ * @property {number} [http_status_code] - HTTP status code if response was received
+ * @property {string} created_at - ISO 8601 timestamp when error occurred
+ * @property {number} [attempt_number] - Which retry attempt this error occurred on
+ * @property {number} [duration_ms] - How long the failed request took in milliseconds
  */
 export interface CallbackError {
   id: string;
-  messageId: string;
-  errorCode: ErrorCode;
-  errorMessage: string;
-  httpStatusCode?: number;
-  createdAt: string;
-  attemptNumber?: number;
-  durationMs?: number;
+  message_id: string;
+  error_code: ErrorCode;
+  error_message: string;
+  http_status_code?: number;
+  created_at: string;
+  attempt_number?: number;
+  duration_ms?: number;
 }
 
 /**
@@ -267,24 +267,24 @@ export interface CallbackError {
  * Aggregated error metrics grouped by error classification
  *
  * @property {Object} summary - Summary statistics
- * @property {number} summary.totalErrors - Total number of errors
- * @property {number} summary.errorTypes - Number of unique error types
+ * @property {number} summary.total_errors - Total number of errors
+ * @property {number} summary.error_types - Number of unique error types
  * @property {string} summary.timestamp - ISO 8601 timestamp of the report
  * @property {Object[]} errors - Array of error statistics
- * @property {ErrorCode} errors[].errorCode - Error code classification
+ * @property {ErrorCode} errors[].error_code - Error code classification
  * @property {number} errors[].count - Total count of this error type
- * @property {number} errors[].avgDurationMs - Average duration in milliseconds
+ * @property {number} errors[].avg_duration_ms - Average duration in milliseconds
  */
 export interface ErrorStatsResponse {
   summary: {
-    totalErrors: number;
-    errorTypes: number;
+    total_errors: number;
+    error_types: number;
     timestamp: string;
   };
   errors: Array<{
-    errorCode: ErrorCode;
+    error_code: ErrorCode;
     count: number;
-    avgDurationMs: number;
+    avg_duration_ms: number;
   }>;
 }
 
@@ -293,15 +293,15 @@ export interface ErrorStatsResponse {
  * Contains errors for messages that failed all retry attempts
  *
  * @property {Object} summary - Summary statistics
- * @property {number} summary.totalMessages - Total number of messages in dead letter queue
- * @property {number} summary.totalErrors - Total number of errors
+ * @property {number} summary.total_messages - Total number of messages in dead letter queue
+ * @property {number} summary.total_errors - Total number of errors
  * @property {string} summary.timestamp - ISO 8601 timestamp of the report
  * @property {Object<string, CallbackError[]>} messages - Errors grouped by message ID
  */
 export interface DeadLetterResponse {
   summary: {
-    totalMessages: number;
-    totalErrors: number;
+    total_messages: number;
+    total_errors: number;
     timestamp: string;
   };
   messages: Record<string, CallbackError[]>;

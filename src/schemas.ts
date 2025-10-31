@@ -66,21 +66,21 @@ const MessageId = z
  */
 export const CallbackErrorSchema: z.ZodObject<any> = z.object({
   id: z.string().describe("Unique error identifier"),
-  messageId: MessageId.describe("ID of the message that failed"),
-  errorCode: ErrorCodeSchema.describe("Machine-readable error code"),
-  errorMessage: z.string().describe("Human-readable error message"),
-  httpStatusCode: z
+  message_id: MessageId.describe("ID of the message that failed"),
+  error_code: ErrorCodeSchema.describe("Machine-readable error code"),
+  error_message: z.string().describe("Human-readable error message"),
+  http_status_code: z
     .number()
     .int()
     .optional()
     .describe("HTTP status code if applicable"),
-  createdAt: ISODateTime.describe("Timestamp when error occurred"),
-  attemptNumber: z
+  created_at: ISODateTime.describe("Timestamp when error occurred"),
+  attempt_number: z
     .number()
     .int()
     .optional()
     .describe("Which retry attempt this error occurred on"),
-  durationMs: z
+  duration_ms: z
     .number()
     .int()
     .optional()
@@ -95,44 +95,44 @@ export type CallbackError = z.infer<typeof CallbackErrorSchema>;
  */
 export const MessageResponseSchema: z.ZodObject<any> = z.object({
   id: MessageId.describe("Unique message identifier"),
-  callbackUrl: z.string().url().describe("Target URL for message delivery"),
+  callback_url: z.string().url().describe("Target URL for message delivery"),
   payload: z
     .record(z.unknown())
     .describe("Message payload (JSON serializable)"),
-  callbackHeaders: z
+  callback_headers: z
     .record(z.string())
     .describe("HTTP headers to forward with callback"),
   status: z
     .enum(["pending", "processing", "completed", "failed", "dead_letter"])
     .describe("Current message status"),
-  createdAt: ISODateTime.describe("Timestamp when message was created"),
-  updatedAt: ISODateTime.describe("Timestamp of last status change"),
-  scheduledAt: ISODateTime.optional().describe(
+  created_at: ISODateTime.describe("Timestamp when message was created"),
+  updated_at: ISODateTime.describe("Timestamp of last status change"),
+  scheduled_at: ISODateTime.optional().describe(
     "Timestamp when message is scheduled to process"
   ),
-  retryCount: z
+  retry_count: z
     .number()
     .int()
     .nonnegative()
     .describe("Number of delivery attempts made"),
-  maxRetries: z
+  max_retries: z
     .number()
     .int()
     .nonnegative()
     .describe("Maximum number of retries allowed"),
-  nextRetryAt: ISODateTime.optional().describe(
+  next_retry_at: ISODateTime.optional().describe(
     "Timestamp of next scheduled retry"
   ),
-  lastError: CallbackErrorSchema.optional().describe(
+  last_error: CallbackErrorSchema.optional().describe(
     "Details of the last callback error"
   ),
   timezone: z.string().optional().describe("Timezone for scheduled processing"),
-  attemptNumber: z
+  attempt_number: z
     .number()
     .int()
     .optional()
     .describe("Current attempt number"),
-  eventCount: z
+  event_count: z
     .number()
     .int()
     .nonnegative()
@@ -190,7 +190,7 @@ export type HealthReadyResponse = z.infer<typeof HealthReadyResponseSchema>;
  */
 export const RetryMessageResponseSchema: z.ZodObject<any> = z.object({
   success: z.boolean().describe("Whether retry was successfully queued"),
-  messageId: MessageId.describe("ID of the retried message"),
+  message_id: MessageId.describe("ID of the retried message"),
   message: z.string().describe("Confirmation message"),
 });
 
@@ -219,11 +219,11 @@ export type TimelineEvent = z.infer<typeof TimelineEventSchema>;
  * Complete event history for a message
  */
 export const TimelineResponseSchema: z.ZodObject<any> = z.object({
-  messageId: z
+  message_id: z
     .string()
     .regex(/^message_[0-7][0-9A-HJKMNP-TV-Z]{25}$/)
     .describe("ID of the message"),
-  eventCount: z.number().int().nonnegative().describe("Total number of events"),
+  event_count: z.number().int().nonnegative().describe("Total number of events"),
   events: z
     .array(TimelineEventSchema)
     .describe("Chronological list of events"),
@@ -237,7 +237,7 @@ export type TimelineResponse = z.infer<typeof TimelineResponseSchema>;
  */
 export const CreateMessageResponseSchema: z.ZodObject<any> = z.object({
   id: MessageId.describe("Unique message identifier"),
-  createdAt: ISODateTime.describe("Timestamp when message was created"),
+  created_at: ISODateTime.describe("Timestamp when message was created"),
   timezone: z.string().describe("IANA timezone used for scheduling"),
 });
 
@@ -251,16 +251,16 @@ export type CreateMessageResponse = z.infer<
  */
 export const ErrorStatsResponseSchema: z.ZodObject<any> = z.object({
   summary: z.object({
-    totalErrors: z.number().int().nonnegative().describe("Total number of errors"),
-    errorTypes: z.number().int().nonnegative().describe("Number of unique error types"),
+    total_errors: z.number().int().nonnegative().describe("Total number of errors"),
+    error_types: z.number().int().nonnegative().describe("Number of unique error types"),
     timestamp: ISODateTime.describe("Timestamp of the report"),
   }),
   errors: z
     .array(
       z.object({
-        errorCode: ErrorCodeSchema.describe("Error code classification"),
+        error_code: ErrorCodeSchema.describe("Error code classification"),
         count: z.number().int().positive().describe("Total count of this error type"),
-        avgDurationMs: z.number().nonnegative().describe("Average duration in milliseconds"),
+        avg_duration_ms: z.number().nonnegative().describe("Average duration in milliseconds"),
       })
     )
     .describe("Array of error statistics"),
@@ -274,8 +274,8 @@ export type ErrorStatsResponse = z.infer<typeof ErrorStatsResponseSchema>;
  */
 export const DeadLetterResponseSchema: z.ZodObject<any> = z.object({
   summary: z.object({
-    totalMessages: z.number().int().nonnegative().describe("Total number of messages in DLQ"),
-    totalErrors: z.number().int().nonnegative().describe("Total number of errors"),
+    total_messages: z.number().int().nonnegative().describe("Total number of messages in DLQ"),
+    total_errors: z.number().int().nonnegative().describe("Total number of errors"),
     timestamp: ISODateTime.describe("Timestamp of the report"),
   }),
   messages: z

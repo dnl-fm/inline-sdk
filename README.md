@@ -2,7 +2,7 @@
 
 > A complete, type-safe TypeScript SDK for the Inline message queue service. Publish messages, manage delivery, and query system status with full TypeScript support.
 
-**Version:** 0.1.2 | **License:** MIT
+**Version:** 0.2.1 | **License:** MIT
 
 ## Table of Contents
 
@@ -198,7 +198,7 @@ const response = await client.publish(
 );
 
 console.log(`Message published: ${response.id}`);
-console.log(`Created at: ${response.createdAt}`);
+console.log(`Created at: ${response.created_at}`);
 console.log(`Timezone: ${response.timezone}`);
 ```
 
@@ -268,13 +268,13 @@ Get a specific message with full metadata:
 const message = await client.getMessage('message_01234567890abcdefghijklmn');
 
 console.log(`Status: ${message.status}`);           // pending, processing, completed, failed, dead_letter
-console.log(`Retry count: ${message.retryCount}`);
-console.log(`Max retries: ${message.maxRetries}`);
-console.log(`Callback URL: ${message.callbackUrl}`);
+console.log(`Retry count: ${message.retry_count}`);
+console.log(`Max retries: ${message.max_retries}`);
+console.log(`Callback URL: ${message.callback_url}`);
 console.log(`Payload:`, message.payload);
 
-if (message.lastError) {
-  console.log(`Last error: ${message.lastError.errorCode} - ${message.lastError.errorMessage}`);
+if (message.last_error) {
+  console.log(`Last error: ${message.last_error.error_code} - ${message.last_error.error_message}`);
 }
 ```
 
@@ -308,7 +308,7 @@ View the complete event history for a message:
 ```typescript
 const timeline = await client.getMessageTimeline('message_01234567890abcdefghijklmn');
 
-console.log(`Total events: ${timeline.eventCount}`);
+console.log(`Total events: ${timeline.event_count}`);
 
 for (const event of timeline.events) {
   const timestamp = new Date(event.timestamp);
@@ -403,7 +403,7 @@ publish(
 
 **Returns:** `CreateMessageResponse` with:
 - `id` - ULID-based message identifier
-- `createdAt` - ISO 8601 creation timestamp
+- `created_at` - ISO 8601 creation timestamp
 - `timezone` - Timezone used for scheduling
 
 **Throws:**
@@ -465,12 +465,12 @@ getMessage(messageId: string): Promise<MessageResponse>
 
 **Returns:** `MessageResponse` with complete metadata:
 - `id` - Message identifier
-- `callbackUrl` - Target endpoint
+- `callback_url` - Target endpoint
 - `payload` - Message data
 - `status` - Current status
-- `retryCount` - Number of delivery attempts
-- `nextRetryAt` - Timestamp of next retry
-- `lastError` - Most recent error details
+- `retry_count` - Number of delivery attempts
+- `next_retry_at` - Timestamp of next retry
+- `last_error` - Most recent error details
 
 **Throws:**
 - `ValidationError` - If messageId is empty
@@ -481,7 +481,7 @@ getMessage(messageId: string): Promise<MessageResponse>
 ```typescript
 const msg = await client.getMessage('message_01234567890abcdefghijklmn');
 console.log(`Status: ${msg.status}`);
-console.log(`Attempts: ${msg.retryCount}/${msg.maxRetries}`);
+console.log(`Attempts: ${msg.retry_count}/${msg.max_retries}`);
 ```
 
 #### listMessages()
@@ -528,8 +528,8 @@ getMessageTimeline(messageId: string): Promise<TimelineResponse>
 - `messageId` (string, required) - ULID of the message
 
 **Returns:** `TimelineResponse` with:
-- `messageId` - The message ID
-- `eventCount` - Total number of events
+- `message_id` - The message ID
+- `event_count` - Total number of events
 - `events[]` - Array of TimelineEvent objects
 
 **Event Types:**
@@ -566,7 +566,7 @@ retryMessage(messageId: string): Promise<RetryMessageResponse>
 
 **Returns:** `RetryMessageResponse` with:
 - `success` - Whether retry was queued
-- `messageId` - The retried message ID
+- `message_id` - The retried message ID
 - `message` - Confirmation message
 
 **Throws:**
@@ -640,16 +640,16 @@ getErrorStats(): Promise<ErrorStatsResponse>
 ```
 
 **Returns:** `ErrorStatsResponse` with:
-- `summary.totalErrors` - Total error count
-- `summary.errorTypes` - Number of unique error types
+- `summary.total_errors` - Total error count
+- `summary.error_types` - Number of unique error types
 - `errors[]` - Array of errors with count and average duration
 
 **Example:**
 ```typescript
 const stats = await client.getErrorStats();
-console.log(`Total errors: ${stats.summary.totalErrors}`);
+console.log(`Total errors: ${stats.summary.total_errors}`);
 for (const err of stats.errors) {
-  console.log(`${err.errorCode}: ${err.count} times`);
+  console.log(`${err.error_code}: ${err.count} times`);
 }
 ```
 
@@ -666,12 +666,12 @@ getErrorsByCode(code: string): Promise<CallbackError[]>
 
 **Returns:** Array of `CallbackError` objects with:
 - `id` - Error identifier
-- `messageId` - Associated message ID
-- `errorCode` - Error classification
-- `errorMessage` - Human-readable description
-- `httpStatusCode` - HTTP status code (if applicable)
-- `attemptNumber` - Which retry attempt
-- `durationMs` - Request duration
+- `message_id` - Associated message ID
+- `error_code` - Error classification
+- `error_message` - Human-readable description
+- `http_status_code` - HTTP status code (if applicable)
+- `attempt_number` - Which retry attempt
+- `duration_ms` - Request duration
 
 **Error Codes:**
 - `HTTP_4XX` - Client error from callback (4xx)
@@ -707,7 +707,7 @@ getMessageErrors(messageId: string): Promise<CallbackError[]>
 ```typescript
 const errors = await client.getMessageErrors('message_123');
 for (const err of errors) {
-  console.log(`Attempt ${err.attemptNumber}: ${err.errorCode}`);
+  console.log(`Attempt ${err.attempt_number}: ${err.error_code}`);
 }
 ```
 
@@ -720,14 +720,14 @@ getDeadLetterErrors(): Promise<DeadLetterResponse>
 ```
 
 **Returns:** `DeadLetterResponse` with:
-- `summary.totalMessages` - Count of DLQ messages
-- `summary.totalErrors` - Count of errors in DLQ
+- `summary.total_messages` - Count of DLQ messages
+- `summary.total_errors` - Count of errors in DLQ
 - `messages` - Errors grouped by message ID
 
 **Example:**
 ```typescript
 const dlq = await client.getDeadLetterErrors();
-console.log(`${dlq.summary.totalMessages} messages in DLQ`);
+console.log(`${dlq.summary.total_messages} messages in DLQ`);
 for (const [msgId, errors] of Object.entries(dlq.messages)) {
   console.log(`Message ${msgId}: ${errors.length} errors`);
 }
@@ -834,29 +834,29 @@ interface ListMessagesOptions {
 ```typescript
 interface MessageResponse {
   id: string;
-  callbackUrl: string;
+  callback_url: string;
   payload: MessagePayload;
-  callbackHeaders: CallbackHeaders;
+  callback_headers: CallbackHeaders;
   status: MessageStatus;
-  createdAt: string;
-  updatedAt: string;
-  scheduledAt?: string;
-  retryCount: number;
-  maxRetries: number;
-  nextRetryAt?: string;
-  lastError?: CallbackError;
+  created_at: string;
+  updated_at: string;
+  scheduled_at?: string;
+  retry_count: number;
+  max_retries: number;
+  next_retry_at?: string;
+  last_error?: CallbackError;
   timezone?: string;
 }
 
 interface CreateMessageResponse {
   id: string;
-  createdAt: string;
+  created_at: string;
   timezone: string;
 }
 
 interface TimelineResponse {
-  messageId: string;
-  eventCount: number;
+  message_id: string;
+  event_count: number;
   events: MessageEvent[];
 }
 
@@ -881,13 +881,13 @@ interface HealthStatus {
 
 interface CallbackError {
   id: string;
-  messageId: string;
-  errorCode: ErrorCode;
-  errorMessage: string;
-  httpStatusCode?: number;
-  createdAt: string;
-  attemptNumber?: number;
-  durationMs?: number;
+  message_id: string;
+  error_code: ErrorCode;
+  error_message: string;
+  http_status_code?: number;
+  created_at: string;
+  attempt_number?: number;
+  duration_ms?: number;
 }
 ```
 
@@ -1091,14 +1091,14 @@ async function processOrder(orderId: number) {
 
     // 4. View timeline
     const timeline = await client.getMessageTimeline(publishResp.id);
-    console.log(`Timeline events: ${timeline.eventCount}`);
+    console.log(`Timeline events: ${timeline.event_count}`);
 
     // 5. Monitor for errors
     const errors = await client.getMessageErrors(publishResp.id);
     if (errors.length > 0) {
       console.warn(`Message has ${errors.length} errors`);
       for (const error of errors) {
-        console.warn(`  - ${error.errorCode}: ${error.errorMessage}`);
+        console.warn(`  - ${error.error_code}: ${error.error_message}`);
       }
     }
 
@@ -1137,11 +1137,11 @@ async function monitorSystem() {
 
   const errors = await client.getErrorStats();
   console.log(`\n=== Error Statistics ===`);
-  console.log(`Total errors: ${errors.summary.totalErrors}`);
-  console.log(`Error types: ${errors.summary.errorTypes}`);
+  console.log(`Total errors: ${errors.summary.total_errors}`);
+  console.log(`Error types: ${errors.summary.error_types}`);
 
   for (const err of errors.errors) {
-    console.log(`  ${err.errorCode}: ${err.count} (avg ${err.avgDurationMs}ms)`);
+    console.log(`  ${err.error_code}: ${err.count} (avg ${err.avg_duration_ms}ms)`);
   }
 }
 
