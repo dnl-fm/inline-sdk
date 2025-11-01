@@ -68,14 +68,14 @@ describe("validateMessageResponse", () => {
   it("should validate a complete message response", () => {
     const response = {
       id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      callbackUrl: "https://example.com/webhook",
+      callback_url: "https://example.com/webhook",
       payload: { event: "test" },
-      callbackHeaders: { "X-API-Key": "secret" },
+      callback_headers: { "X-API-Key": "secret" },
       status: "pending",
-      createdAt: "2025-10-23T10:30:00.000Z",
-      updatedAt: "2025-10-23T10:30:00.000Z",
-      retryCount: 0,
-      maxRetries: 3,
+      created_at: "2025-10-23T10:30:00.000Z",
+      updated_at: "2025-10-23T10:30:00.000Z",
+      retry_count: 0,
+      max_retries: 3,
     };
 
     expect(() => validateMessageResponse(response)).not.toThrow();
@@ -84,37 +84,37 @@ describe("validateMessageResponse", () => {
   it("should validate response with optional fields", () => {
     const response = {
       id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      callbackUrl: "https://example.com/webhook",
+      callback_url: "https://example.com/webhook",
       payload: {},
-      callbackHeaders: {},
+      callback_headers: {},
       status: "completed",
-      createdAt: "2025-10-23T10:30:00.000Z",
-      updatedAt: "2025-10-23T10:35:00.000Z",
-      scheduledAt: "2025-10-23T11:00:00.000Z",
-      retryCount: 2,
-      maxRetries: 5,
-      nextRetryAt: "2025-10-23T10:35:00.000Z",
-      lastError: {
+      created_at: "2025-10-23T10:30:00.000Z",
+      updated_at: "2025-10-23T10:35:00.000Z",
+      scheduled_at: "2025-10-23T11:00:00.000Z",
+      retry_count: 2,
+      max_retries: 5,
+      next_retry_at: "2025-10-23T10:35:00.000Z",
+      last_error: {
         id: "err_123",
-        messageId: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-        errorCode: "TIMEOUT",
-        errorMessage: "Request timed out",
-        createdAt: "2025-10-23T10:30:00.000Z",
+        message_id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
+        error_code: "TIMEOUT",
+        error_message: "Request timed out",
+        created_at: "2025-10-23T10:30:00.000Z",
       },
       timezone: "UTC",
-      attemptNumber: 3,
+      attempt_number: 3,
     };
 
     const result = validateMessageResponse(response);
-    expect(result.attemptNumber).toBe(3);
-    expect(result.lastError?.errorCode).toBe("TIMEOUT");
+    expect(result.attempt_number).toBe(3);
+    expect(result.last_error?.error_code).toBe("TIMEOUT");
   });
 
   it("should throw on missing required fields", () => {
     const incomplete = {
       id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      callbackUrl: "https://example.com/webhook",
-      // Missing payload, callbackHeaders, status, etc.
+      callback_url: "https://example.com/webhook",
+      // Missing payload, callback_headers, status, etc.
     };
 
     expect(() => validateMessageResponse(incomplete)).toThrow();
@@ -123,14 +123,14 @@ describe("validateMessageResponse", () => {
   it("should throw on invalid message ID", () => {
     const invalid = {
       id: "invalid-id",
-      callbackUrl: "https://example.com/webhook",
+      callback_url: "https://example.com/webhook",
       payload: {},
-      callbackHeaders: {},
+      callback_headers: {},
       status: "pending",
-      createdAt: "2025-10-23T10:30:00.000Z",
-      updatedAt: "2025-10-23T10:30:00.000Z",
-      retryCount: 0,
-      maxRetries: 3,
+      created_at: "2025-10-23T10:30:00.000Z",
+      updated_at: "2025-10-23T10:30:00.000Z",
+      retry_count: 0,
+      max_retries: 3,
     };
 
     expect(() => validateMessageResponse(invalid)).toThrow();
@@ -139,14 +139,14 @@ describe("validateMessageResponse", () => {
   it("should throw on invalid timestamps", () => {
     const invalidTs = {
       id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      callbackUrl: "https://example.com/webhook",
+      callback_url: "https://example.com/webhook",
       payload: {},
-      callbackHeaders: {},
+      callback_headers: {},
       status: "pending",
-      createdAt: "not-a-timestamp",
-      updatedAt: "2025-10-23T10:30:00.000Z",
-      retryCount: 0,
-      maxRetries: 3,
+      created_at: "not-a-timestamp",
+      updated_at: "2025-10-23T10:30:00.000Z",
+      retry_count: 0,
+      max_retries: 3,
     };
 
     expect(() => validateMessageResponse(invalidTs)).toThrow();
@@ -156,8 +156,8 @@ describe("validateMessageResponse", () => {
 describe("validateTimelineResponse", () => {
   it("should validate a complete timeline", () => {
     const timeline = {
-      messageId: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
-      eventCount: 3,
+      message_id: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
+      event_count: 3,
       events: [
         {
           type: "MESSAGE_RECEIVED",
@@ -180,8 +180,8 @@ describe("validateTimelineResponse", () => {
 
   it("should validate an empty timeline", () => {
     const timeline = {
-      messageId: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
-      eventCount: 0,
+      message_id: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
+      event_count: 0,
       events: [],
     };
     expect(() => validateTimelineResponse(timeline)).not.toThrow();
@@ -189,8 +189,8 @@ describe("validateTimelineResponse", () => {
 
   it("should throw on missing events field", () => {
     const invalid = {
-      messageId: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
-      eventCount: 0,
+      message_id: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
+      event_count: 0,
       data: [],
     };
     expect(() => validateTimelineResponse(invalid)).toThrow();
@@ -198,8 +198,8 @@ describe("validateTimelineResponse", () => {
 
   it("should throw on invalid event type", () => {
     const invalid = {
-      messageId: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
-      eventCount: 1,
+      message_id: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
+      event_count: 1,
       events: [
         {
           type: "INVALID_TYPE",
@@ -213,8 +213,8 @@ describe("validateTimelineResponse", () => {
 
   it("should throw on invalid timestamp in event", () => {
     const invalid = {
-      messageId: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
-      eventCount: 1,
+      message_id: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
+      event_count: 1,
       events: [
         {
           type: "MESSAGE_RECEIVED",
@@ -231,13 +231,13 @@ describe("validateCallbackError", () => {
   it("should validate a complete callback error", () => {
     const error = {
       id: "err_123",
-      messageId: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      errorCode: "HTTP_5XX",
-      errorMessage: "Internal server error",
-      httpStatusCode: 500,
-      createdAt: "2025-10-23T10:30:00.000Z",
-      attemptNumber: 2,
-      durationMs: 5000,
+      message_id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
+      error_code: "HTTP_5XX",
+      error_message: "Internal server error",
+      http_status_code: 500,
+      created_at: "2025-10-23T10:30:00.000Z",
+      attempt_number: 2,
+      duration_ms: 5000,
     };
 
     expect(() => validateCallbackError(error)).not.toThrow();
@@ -246,10 +246,10 @@ describe("validateCallbackError", () => {
   it("should validate error with minimal fields", () => {
     const error = {
       id: "err_123",
-      messageId: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      errorCode: "TIMEOUT",
-      errorMessage: "Request timed out",
-      createdAt: "2025-10-23T10:30:00.000Z",
+      message_id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
+      error_code: "TIMEOUT",
+      error_message: "Request timed out",
+      created_at: "2025-10-23T10:30:00.000Z",
     };
 
     expect(() => validateCallbackError(error)).not.toThrow();
@@ -258,8 +258,8 @@ describe("validateCallbackError", () => {
   it("should throw on missing required fields", () => {
     const incomplete = {
       id: "err_123",
-      messageId: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      // Missing errorCode, errorMessage, createdAt
+      message_id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
+      // Missing error_code, error_message, created_at
     };
 
     expect(() => validateCallbackError(incomplete)).toThrow();
@@ -268,10 +268,10 @@ describe("validateCallbackError", () => {
   it("should throw on invalid errorCode", () => {
     const invalid = {
       id: "err_123",
-      messageId: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      errorCode: "INVALID_CODE",
-      errorMessage: "Error",
-      createdAt: "2025-10-23T10:30:00.000Z",
+      message_id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
+      error_code: "INVALID_CODE",
+      error_message: "Error",
+      created_at: "2025-10-23T10:30:00.000Z",
     };
 
     expect(() => validateCallbackError(invalid)).toThrow();
@@ -280,10 +280,10 @@ describe("validateCallbackError", () => {
   it("should throw on invalid timestamp", () => {
     const invalid = {
       id: "err_123",
-      messageId: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      errorCode: "TIMEOUT",
-      errorMessage: "Error",
-      createdAt: "invalid-timestamp",
+      message_id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
+      error_code: "TIMEOUT",
+      error_message: "Error",
+      created_at: "invalid-timestamp",
     };
 
     expect(() => validateCallbackError(invalid)).toThrow();

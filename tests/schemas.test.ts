@@ -70,13 +70,13 @@ describe("CallbackErrorSchema", () => {
   it("should validate a complete callback error", () => {
     const error = {
       id: "err_123",
-      messageId: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      errorCode: "HTTP_5XX",
-      errorMessage: "Internal server error",
-      httpStatusCode: 500,
-      createdAt: "2025-10-23T10:30:00.000Z",
-      attemptNumber: 2,
-      durationMs: 5000,
+      message_id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
+      error_code: "HTTP_5XX",
+      error_message: "Internal server error",
+      http_status_code: 500,
+      created_at: "2025-10-23T10:30:00.000Z",
+      attempt_number: 2,
+      duration_ms: 5000,
     };
 
     const result = CallbackErrorSchema.safeParse(error);
@@ -86,10 +86,10 @@ describe("CallbackErrorSchema", () => {
   it("should validate callback error with minimal fields", () => {
     const error = {
       id: "err_123",
-      messageId: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      errorCode: "TIMEOUT",
-      errorMessage: "Request timed out",
-      createdAt: "2025-10-23T10:30:00.000Z",
+      message_id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
+      error_code: "TIMEOUT",
+      error_message: "Request timed out",
+      created_at: "2025-10-23T10:30:00.000Z",
     };
 
     const result = CallbackErrorSchema.safeParse(error);
@@ -127,14 +127,14 @@ describe("MessageResponseSchema", () => {
   it("should validate a complete message response", () => {
     const message = {
       id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      callbackUrl: "https://example.com/webhook",
+      callback_url: "https://example.com/webhook",
       payload: { event: "test", data: 123 },
-      callbackHeaders: { "X-API-Key": "secret" },
+      callback_headers: { "X-API-Key": "secret" },
       status: "completed",
-      createdAt: "2025-10-23T10:30:00.000Z",
-      updatedAt: "2025-10-23T10:35:00.000Z",
-      retryCount: 2,
-      maxRetries: 5,
+      created_at: "2025-10-23T10:30:00.000Z",
+      updated_at: "2025-10-23T10:35:00.000Z",
+      retry_count: 2,
+      max_retries: 5,
     };
 
     const result = MessageResponseSchema.safeParse(message);
@@ -144,25 +144,25 @@ describe("MessageResponseSchema", () => {
   it("should validate message response with optional fields", () => {
     const message = {
       id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      callbackUrl: "https://example.com/webhook",
+      callback_url: "https://example.com/webhook",
       payload: {},
-      callbackHeaders: {},
+      callback_headers: {},
       status: "pending",
-      createdAt: "2025-10-23T10:30:00.000Z",
-      updatedAt: "2025-10-23T10:30:00.000Z",
-      scheduledAt: "2025-10-23T11:00:00.000Z",
-      retryCount: 0,
-      maxRetries: 3,
-      nextRetryAt: "2025-10-23T10:35:00.000Z",
-      lastError: {
+      created_at: "2025-10-23T10:30:00.000Z",
+      updated_at: "2025-10-23T10:30:00.000Z",
+      scheduled_at: "2025-10-23T11:00:00.000Z",
+      retry_count: 0,
+      max_retries: 3,
+      next_retry_at: "2025-10-23T10:35:00.000Z",
+      last_error: {
         id: "err_123",
-        messageId: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-        errorCode: "TIMEOUT",
-        errorMessage: "Timeout",
-        createdAt: "2025-10-23T10:30:00.000Z",
+        message_id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
+        error_code: "TIMEOUT",
+        error_message: "Timeout",
+        created_at: "2025-10-23T10:30:00.000Z",
       },
       timezone: "UTC",
-      attemptNumber: 1,
+      attempt_number: 1,
     };
 
     const result = MessageResponseSchema.safeParse(message);
@@ -172,14 +172,14 @@ describe("MessageResponseSchema", () => {
   it("should reject message response with invalid messageId", () => {
     const message = {
       id: "bad-id",
-      callbackUrl: "https://example.com/webhook",
+      callback_url: "https://example.com/webhook",
       payload: {},
-      callbackHeaders: {},
+      callback_headers: {},
       status: "completed",
-      createdAt: "2025-10-23T10:30:00.000Z",
-      updatedAt: "2025-10-23T10:35:00.000Z",
-      retryCount: 0,
-      maxRetries: 5,
+      created_at: "2025-10-23T10:30:00.000Z",
+      updated_at: "2025-10-23T10:35:00.000Z",
+      retry_count: 0,
+      max_retries: 5,
     };
 
     const result = MessageResponseSchema.safeParse(message);
@@ -189,14 +189,14 @@ describe("MessageResponseSchema", () => {
   it("should reject message response with invalid timestamps", () => {
     const message = {
       id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
-      callbackUrl: "https://example.com/webhook",
+      callback_url: "https://example.com/webhook",
       payload: {},
-      callbackHeaders: {},
+      callback_headers: {},
       status: "completed",
-      createdAt: 1698056400000, // Unix ms, not ISO string
-      updatedAt: "2025-10-23T10:35:00.000Z",
-      retryCount: 0,
-      maxRetries: 5,
+      created_at: 1698056400000, // Unix ms, not ISO string
+      updated_at: "2025-10-23T10:35:00.000Z",
+      retry_count: 0,
+      max_retries: 5,
     };
 
     const result = MessageResponseSchema.safeParse(message);
@@ -247,7 +247,7 @@ describe("RetryMessageResponseSchema", () => {
   it("should validate a valid retry response", () => {
     const retry = {
       success: true,
-      messageId: "message_000004QYYDCF9PHB9C6VWVHZEZ",
+      message_id: "message_000004QYYDCF9PHB9C6VWVHZEZ",
       message: "Message queued for retry",
     };
 
@@ -258,7 +258,7 @@ describe("RetryMessageResponseSchema", () => {
   it("should reject retry response with invalid messageId", () => {
     const retry = {
       success: true,
-      messageId: "invalid",
+      message_id: "invalid",
       message: "Message queued for retry",
     };
 
@@ -303,8 +303,8 @@ describe("TimelineEventSchema", () => {
 describe("TimelineResponseSchema", () => {
   it("should validate a complete timeline response", () => {
     const timeline = {
-      messageId: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
-      eventCount: 3,
+      message_id: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
+      event_count: 3,
       events: [
         {
           type: "MESSAGE_RECEIVED",
@@ -329,8 +329,8 @@ describe("TimelineResponseSchema", () => {
 
   it("should validate timeline with empty events", () => {
     const timeline = {
-      messageId: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
-      eventCount: 0,
+      message_id: "message_01K88AMDZT4G9SBP1AQ51V5HSP",
+      event_count: 0,
       events: [],
     };
 
@@ -358,14 +358,14 @@ describe("MessageId format validation", () => {
     for (const id of validIds) {
       const result = MessageResponseSchema.safeParse({
         id,
-        callbackUrl: "https://example.com",
+        callback_url: "https://example.com",
         payload: {},
-        callbackHeaders: {},
+        callback_headers: {},
         status: "pending",
-        createdAt: "2025-10-23T10:30:00.000Z",
-        updatedAt: "2025-10-23T10:30:00.000Z",
-        retryCount: 0,
-        maxRetries: 3,
+        created_at: "2025-10-23T10:30:00.000Z",
+        updated_at: "2025-10-23T10:30:00.000Z",
+        retry_count: 0,
+        max_retries: 3,
       });
       expect(result.success).toBe(true);
     }
@@ -383,14 +383,14 @@ describe("MessageId format validation", () => {
     for (const id of invalidIds) {
       const result = MessageResponseSchema.safeParse({
         id,
-        callbackUrl: "https://example.com",
+        callback_url: "https://example.com",
         payload: {},
-        callbackHeaders: {},
+        callback_headers: {},
         status: "pending",
-        createdAt: "2025-10-23T10:30:00.000Z",
-        updatedAt: "2025-10-23T10:30:00.000Z",
-        retryCount: 0,
-        maxRetries: 3,
+        created_at: "2025-10-23T10:30:00.000Z",
+        updated_at: "2025-10-23T10:30:00.000Z",
+        retry_count: 0,
+        max_retries: 3,
       });
       expect(result.success).toBe(false);
     }
