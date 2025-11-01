@@ -434,6 +434,221 @@ test("publish should merge payload with headers in request body", async () => {
 });
 
 // ============================================================================
+// PHASE 4B: HTTP Method Tests (9 tests)
+// ============================================================================
+
+test("publish should include Queue-Method header for PUT", async () => {
+  // Arrange
+  const client = new InlineClient({
+    apiUrl: TEST_BASE_URL,
+    token: TEST_API_KEY,
+  });
+
+  const callbackUrl = "https://example.com/webhook";
+  const payload = { data: "test" };
+  const response = createMockMessagePublic();
+
+  mockFetch.setResponse(
+    `${TEST_BASE_URL}/publish/${encodeURIComponent(callbackUrl)}`,
+    response,
+  );
+
+  // Act
+  await client.publish(callbackUrl, payload, { method: "PUT" });
+
+  // Assert
+  const call = mockFetch.getLastCall();
+  const bodyStr = call?.body || "{}";
+  const body = JSON.parse(bodyStr);
+  expect(body["Queue-Method"]).toBe("PUT");
+});
+
+test("publish should include Queue-Method header for PATCH", async () => {
+  // Arrange
+  const client = new InlineClient({
+    apiUrl: TEST_BASE_URL,
+    token: TEST_API_KEY,
+  });
+
+  const callbackUrl = "https://example.com/webhook";
+  const payload = { data: "test" };
+  const response = createMockMessagePublic();
+
+  mockFetch.setResponse(
+    `${TEST_BASE_URL}/publish/${encodeURIComponent(callbackUrl)}`,
+    response,
+  );
+
+  // Act
+  await client.publish(callbackUrl, payload, { method: "PATCH" });
+
+  // Assert
+  const call = mockFetch.getLastCall();
+  const bodyStr = call?.body || "{}";
+  const body = JSON.parse(bodyStr);
+  expect(body["Queue-Method"]).toBe("PATCH");
+});
+
+test("publish should include Queue-Method header for DELETE", async () => {
+  // Arrange
+  const client = new InlineClient({
+    apiUrl: TEST_BASE_URL,
+    token: TEST_API_KEY,
+  });
+
+  const callbackUrl = "https://example.com/webhook";
+  const payload = { data: "test" };
+  const response = createMockMessagePublic();
+
+  mockFetch.setResponse(
+    `${TEST_BASE_URL}/publish/${encodeURIComponent(callbackUrl)}`,
+    response,
+  );
+
+  // Act
+  await client.publish(callbackUrl, payload, { method: "DELETE" });
+
+  // Assert
+  const call = mockFetch.getLastCall();
+  const bodyStr = call?.body || "{}";
+  const body = JSON.parse(bodyStr);
+  expect(body["Queue-Method"]).toBe("DELETE");
+});
+
+test("publish with GET method should send GET request", async () => {
+  // Arrange
+  const client = new InlineClient({
+    apiUrl: TEST_BASE_URL,
+    token: TEST_API_KEY,
+  });
+
+  const callbackUrl = "https://example.com/webhook";
+  const payload = { data: "test" };
+  const response = createMockMessagePublic();
+
+  mockFetch.setResponse(
+    `${TEST_BASE_URL}/publish/${encodeURIComponent(callbackUrl)}`,
+    response,
+  );
+
+  // Act
+  await client.publish(callbackUrl, payload, { method: "GET" });
+
+  // Assert
+  const call = mockFetch.getLastCall();
+  // When GET is specified, request method should be GET
+  expect(call?.method).toBe("GET");
+  // Body should not be present for GET requests
+  expect(call?.body).toBeUndefined();
+});
+
+test("publish should use GET request method when method is GET", async () => {
+  // Arrange
+  const client = new InlineClient({
+    apiUrl: TEST_BASE_URL,
+    token: TEST_API_KEY,
+  });
+
+  const callbackUrl = "https://example.com/webhook";
+  const payload = { data: "test" };
+  const response = createMockMessagePublic();
+
+  mockFetch.setResponse(
+    `${TEST_BASE_URL}/publish/${encodeURIComponent(callbackUrl)}`,
+    response,
+  );
+
+  // Act
+  await client.publish(callbackUrl, payload, { method: "GET" });
+
+  // Assert
+  const call = mockFetch.getLastCall();
+  expect(call?.method).toBe("GET");
+});
+
+test("publish should use specified HTTP method for request", async () => {
+  // Arrange
+  const client = new InlineClient({
+    apiUrl: TEST_BASE_URL,
+    token: TEST_API_KEY,
+  });
+
+  const callbackUrl = "https://example.com/webhook";
+  const payload = { data: "test" };
+  const response = createMockMessagePublic();
+
+  mockFetch.setResponse(
+    `${TEST_BASE_URL}/publish/${encodeURIComponent(callbackUrl)}`,
+    response,
+  );
+
+  // Act
+  await client.publish(callbackUrl, payload, { method: "PUT" });
+
+  // Assert
+  const call = mockFetch.getLastCall();
+  expect(call?.method).toBe("PUT");
+});
+
+test("publish should not include Queue-Method header if method not specified", async () => {
+  // Arrange
+  const client = new InlineClient({
+    apiUrl: TEST_BASE_URL,
+    token: TEST_API_KEY,
+  });
+
+  const callbackUrl = "https://example.com/webhook";
+  const payload = { data: "test" };
+  const response = createMockMessagePublic();
+
+  mockFetch.setResponse(
+    `${TEST_BASE_URL}/publish/${encodeURIComponent(callbackUrl)}`,
+    response,
+  );
+
+  // Act
+  await client.publish(callbackUrl, payload);
+
+  // Assert
+  const call = mockFetch.getLastCall();
+  const bodyStr = call?.body || "{}";
+  const body = JSON.parse(bodyStr);
+  expect(body["Queue-Method"]).toBeUndefined();
+});
+
+test("publish should allow combining method with other options", async () => {
+  // Arrange
+  const client = new InlineClient({
+    apiUrl: TEST_BASE_URL,
+    token: TEST_API_KEY,
+  });
+
+  const callbackUrl = "https://example.com/webhook";
+  const payload = { data: "test" };
+  const response = createMockMessagePublic();
+
+  mockFetch.setResponse(
+    `${TEST_BASE_URL}/publish/${encodeURIComponent(callbackUrl)}`,
+    response,
+  );
+
+  // Act
+  await client.publish(callbackUrl, payload, {
+    method: "PATCH",
+    delay: "5m",
+    headers: { "X-Custom": "value" },
+  });
+
+  // Assert
+  const call = mockFetch.getLastCall();
+  const bodyStr = call?.body || "{}";
+  const body = JSON.parse(bodyStr);
+  expect(body["Queue-Method"]).toBe("PATCH");
+  expect(body["Queue-Delay"]).toBe("5m");
+  expect(body["Queue-Forward-X-Custom"]).toBe("value");
+});
+
+// ============================================================================
 // PHASE 5: Message Retrieval Tests (5 + 7 + 5 = 17 tests)
 // ============================================================================
 

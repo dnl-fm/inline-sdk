@@ -22,6 +22,17 @@ export const ErrorCodeSchema: z.ZodType<typeof errorCodes[number]> = z.enum(
 export type ErrorCode = z.infer<typeof ErrorCodeSchema>;
 
 /**
+ * HTTP methods allowed for callbacks
+ * Determines how the message will be delivered to the callback endpoint
+ */
+const httpMethods = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
+
+export const HttpMethodSchema: z.ZodType<typeof httpMethods[number]> = z.enum(
+  httpMethods as any,
+);
+export type HttpMethod = z.infer<typeof HttpMethodSchema>;
+
+/**
  * Event types that occur during message processing lifecycle
  * Tracks the complete journey of a message through the system
  */

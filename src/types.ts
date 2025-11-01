@@ -382,6 +382,13 @@ export interface InlineClientConfig {
  *   - Used with naive notBefore timestamps to interpret local time
  *   - Also provides context in responses for display purposes
  *   - See: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+ * @property {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'} [method] - HTTP method for callback (default: POST, or GET if no payload)
+ *   - GET: Send callback via GET request (no payload)
+ *   - POST: Send callback via POST request (default)
+ *   - PUT: Send callback via PUT request
+ *   - PATCH: Send callback via PATCH request
+ *   - DELETE: Send callback via DELETE request
+ *   - Note: This overrides the request method when specified
  *
  * @example
  * // Simple publish (immediate delivery)
@@ -411,10 +418,17 @@ export interface InlineClientConfig {
  * await client.publish(url, payload, {
  *   headers: { 'X-Custom-Header': 'value' }
  * });
+ *
+ * @example
+ * // Specify callback HTTP method
+ * await client.publish(url, payload, {
+ *   method: 'PUT'  // Use PUT for callback instead of POST
+ * });
  */
 export interface PublishOptions {
   headers?: CallbackHeaders;
   delay?: string; // Relative delay (e.g., "5m", "1h")
   notBefore?: string; // ISO 8601 absolute scheduling datetime
   timezone?: string; // IANA timezone identifier
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; // HTTP method for callback
 }

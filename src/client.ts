@@ -198,7 +198,7 @@ export class InlineClient {
    * Publish a message to the queue for delivery to a callback URL
    *
    * @async
-   * @param {string} callbackUrl - Target URL where the message will be delivered via HTTP POST
+   * @param {string} callbackUrl - Target URL where the message will be delivered via HTTP
    * @param {MessagePayload} payload - Message data (must be JSON-serializable)
    * @param {PublishOptions} [options] - Optional configuration for message delivery
    * @returns {Promise<CreateMessageResponse>} Response with message ID, creation timestamp, and timezone
@@ -246,6 +246,16 @@ export class InlineClient {
    *     headers: { 'X-API-Key': 'secret' }
    *   }
    * );
+   *
+   * @example
+   * // Specify callback HTTP method
+   * const response = await client.publish(
+   *   'https://webhook.example.com/receive',
+   *   { user_id: 123, action: 'order_placed' },
+   *   {
+   *     method: 'PUT' // Use PUT for callback instead of POST
+   *   }
+   * );
    */
   async publish(
     callbackUrl: string,
@@ -259,7 +269,41 @@ export class InlineClient {
     // URL encode the callback URL for the path
     const encodedUrl = encodeURIComponent(callbackUrl);
 
-    // Start with the payload
+    // Determine request method (default: POST unless method is specified)
+    const httpMethod = options?.method ? options.method.toUpperCase() : "POST";
+
+    // For GET requests, use headers instead of body
+    if (httpMethod === "GET") {
+      const headers: Record<string, string> = {};
+
+      if (options?.delay) {
+        headers["Queue-Delay"] = options.delay;
+      }
+      if (options?.notBefore) {
+        headers["Queue-notBefore"] = options.notBefore;
+      }
+      if (options?.timezone) {
+        headers["Queue-timezone"] = options.timezone;
+      }
+      if (options?.method) {
+        headers["Queue-Method"] = httpMethod;
+      }
+
+      // Add Queue-Forward-* headers for custom headers
+      if (options?.headers) {
+        Object.entries(options.headers).forEach(([key, value]) => {
+          headers[`Queue-Forward-${key}`] = value;
+        });
+      }
+
+      return this.request<CreateMessageResponse>(
+        "GET",
+        `/publish/${encodedUrl}`,
+        headers && Object.keys(headers).length > 0 ? { headers } : undefined,
+      );
+    }
+
+    // For non-GET requests, build request body with payload and Queue-* fields
     const requestBody: Record<string, any> = { ...payload };
 
     // Add Queue-Forward-* fields for webhook headers
@@ -284,9 +328,13 @@ export class InlineClient {
       requestBody["Queue-timezone"] = options.timezone;
     }
 
-    // Send the combined body with all Queue-* fields merged into request body
+    // Add Queue-Method if method is specified
+    if (options?.method) {
+      requestBody["Queue-Method"] = httpMethod;
+    }
+
     return this.request<CreateMessageResponse>(
-      "POST",
+      httpMethod,
       `/publish/${encodedUrl}`,
       { body: requestBody },
     );

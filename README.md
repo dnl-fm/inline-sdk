@@ -260,6 +260,39 @@ const response = await client.publish(
 );
 ```
 
+#### Specify HTTP method for callback
+
+Choose which HTTP method to use when delivering to the callback endpoint:
+
+```typescript
+// Use PUT for callback instead of default POST
+const response = await client.publish(
+  'https://webhook.example.com/events',
+  { event: 'resource.updated', resourceId: 789 },
+  {
+    method: 'PUT'  // GET, POST, PUT, PATCH, DELETE
+  }
+);
+
+// GET callback (no payload, webhook-style)
+const response = await client.publish(
+  'https://webhook.example.com/ping',
+  { },  // Empty payload for GET
+  {
+    method: 'GET'
+  }
+);
+
+// DELETE callback
+const response = await client.publish(
+  'https://webhook.example.com/resources/123',
+  { reason: 'cleanup' },
+  {
+    method: 'DELETE'
+  }
+);
+```
+
 ### Retrieving Messages
 
 Get a specific message with full metadata:
@@ -400,6 +433,7 @@ publish(
 - `notBefore` (string) - ISO 8601 absolute scheduling datetime
 - `timezone` (string) - IANA timezone identifier for context
 - `headers` (Record<string, string>) - Custom HTTP headers to forward
+- `method` ('GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE') - HTTP method for callback (default: POST)
 
 **Returns:** `CreateMessageResponse` with:
 - `id` - ULID-based message identifier
@@ -820,6 +854,7 @@ interface PublishOptions {
   delay?: string;             // Relative delay (e.g., "5m")
   notBefore?: string;         // ISO 8601 absolute time
   timezone?: string;          // IANA timezone
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';  // HTTP method for callback
 }
 
 interface ListMessagesOptions {
