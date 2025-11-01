@@ -109,6 +109,7 @@ export class InlineClient {
     options?: {
       body?: any;
       query?: Record<string, any>;
+      headers?: Record<string, string>;
     },
   ): Promise<T> {
     const url = new URL(path, this.apiUrl);
@@ -126,6 +127,13 @@ export class InlineClient {
       "Content-Type": "application/json",
       Authorization: `Bearer ${this.token}`,
     };
+
+    // Add custom headers (for GET requests with Queue-Forward-* headers)
+    if (options?.headers) {
+      Object.entries(options.headers).forEach(([key, value]) => {
+        headers[key] = value;
+      });
+    }
 
     try {
       const controller = new AbortController();
@@ -272,9 +280,10 @@ export class InlineClient {
     // Determine request method (default: POST unless method is specified)
     const httpMethod = options?.method ? options.method.toUpperCase() : "POST";
 
-    // For GET requests, pass scheduling parameters as query params in URL
+    // For GET requests, pass scheduling parameters as query params and forward headers as request headers
     if (httpMethod === "GET") {
       const query: Record<string, string> = {};
+      const reqHeaders: Record<string, string> = {};
 
       if (options?.delay) {
         query["Queue-Delay"] = options.delay;
@@ -289,17 +298,25 @@ export class InlineClient {
         query["Queue-Method"] = httpMethod;
       }
 
-      // Add Queue-Forward-* query params for custom headers
+      // Add Queue-Forward-* as HTTP headers for custom headers
       if (options?.headers) {
         Object.entries(options.headers).forEach(([key, value]) => {
-          query[`Queue-Forward-${key}`] = value;
+          reqHeaders[`Queue-Forward-${key}`] = value;
         });
+      }
+
+      const requestOptions: { query?: Record<string, string>; headers?: Record<string, string> } = {};
+      if (Object.keys(query).length > 0) {
+        requestOptions.query = query;
+      }
+      if (Object.keys(reqHeaders).length > 0) {
+        requestOptions.headers = reqHeaders;
       }
 
       return this.request<CreateMessageResponse>(
         "GET",
         `/publish/${encodedUrl}`,
-        Object.keys(query).length > 0 ? { query } : undefined,
+        Object.keys(requestOptions).length > 0 ? requestOptions : undefined,
       );
     }
 
