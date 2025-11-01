@@ -9,6 +9,7 @@ import type {
   RetryMessageResponse,
   HealthStatus,
   HealthReadyResponse,
+  StatsResponse,
   ErrorStatsResponse,
   DeadLetterResponse,
   DebugMessagesResponse,
@@ -517,6 +518,28 @@ export class InlineClient {
    */
   async getHealthReady(): Promise<HealthReadyResponse> {
     return this.request<HealthReadyResponse>("GET", "/health/ready");
+  }
+
+  /**
+   * Get message processing and bandwidth statistics
+   *
+   * Returns statistics on message processing including counts, timings, and bandwidth usage
+   * broken down by time periods (day, week, month, total).
+   *
+   * @async
+   * @returns {Promise<StatsResponse>} Message processing and bandwidth statistics
+   * @throws {InlineError} On errors
+   *
+   * @example
+   * const stats = await client.getStats();
+   * console.log(`Processed: ${stats.processed_count}`);
+   * console.log(`Success: ${stats.success_count}`);
+   * console.log(`Failed: ${stats.failed_count}`);
+   * console.log(`Day bandwidth: ${stats.bandwidth.day_bytes} bytes`);
+   * console.log(`Total bandwidth: ${stats.bandwidth.total_bytes} bytes`);
+   */
+  async getStats(): Promise<StatsResponse> {
+    return this.request<StatsResponse>("GET", "/stats");
   }
 
   /**

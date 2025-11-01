@@ -1,6 +1,6 @@
 {
   "name": "@dnl-fm/inline-sdk",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "TypeScript SDK for Inline message queue API",
   "type": "module",
   "exports": {

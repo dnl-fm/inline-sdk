@@ -661,6 +661,39 @@ if (ready.status === 'ready') {
 }
 ```
 
+#### getStats()
+
+Get message processing and bandwidth statistics broken down by time period.
+
+```typescript
+getStats(): Promise<StatsResponse>
+```
+
+**Returns:** `StatsResponse` with:
+- `processed_count` - Total number of messages processed
+- `success_count` - Number of successful deliveries
+- `failed_count` - Number of failed deliveries
+- `last_processed_at` - ISO 8601 timestamp of last processed message
+- `last_failed_at` - ISO 8601 timestamp of last failed message
+- `queue_depth` - Current number of pending messages
+- `since_start` - Uptime and performance metrics since service start
+- `bandwidth` - Bandwidth usage broken down by time period:
+  - `day_bytes` - Total bandwidth used in last 24 hours
+  - `week_bytes` - Total bandwidth used in last 7 days
+  - `month_bytes` - Total bandwidth used in last 30 days
+  - `total_bytes` - Total bandwidth used since service start
+
+**Example:**
+```typescript
+const stats = await client.getStats();
+console.log(`Processed: ${stats.processed_count}`);
+console.log(`Success: ${stats.success_count}`);
+console.log(`Failed: ${stats.failed_count}`);
+console.log(`Queue depth: ${stats.queue_depth}`);
+console.log(`Total bandwidth: ${stats.bandwidth.total_bytes} bytes`);
+console.log(`Today's bandwidth: ${stats.bandwidth.day_bytes} bytes`);
+```
+
 ---
 
 ### Error Monitoring

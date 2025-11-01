@@ -84,6 +84,8 @@ export type CallbackHeaders = Record<string, string>;
  * @property {string} callback_url - Target URL where message will be delivered via HTTP POST
  * @property {MessagePayload} payload - Message data (JSON serializable object)
  * @property {CallbackHeaders} callback_headers - HTTP headers to forward with callback request
+ * @property {string} [callback_method] - HTTP method for callback request (GET, POST, PUT, PATCH, DELETE)
+ * @property {number} [bandwidth_used] - Total bandwidth used in bytes for request and response
  * @property {MessageStatus} status - Current message status in the lifecycle
  * @property {string} created_at - ISO 8601 timestamp when message was created
  * @property {string} updated_at - ISO 8601 timestamp of last status change
@@ -100,6 +102,8 @@ export interface MessageResponse {
   callback_url: string;
   payload: MessagePayload;
   callback_headers: CallbackHeaders;
+  callback_method?: string;
+  bandwidth_used?: number;
   status: MessageStatus;
   created_at: string;
   updated_at: string;
@@ -431,4 +435,57 @@ export interface PublishOptions {
   notBefore?: string; // ISO 8601 absolute scheduling datetime
   timezone?: string; // IANA timezone identifier
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; // HTTP method for callback
+}
+
+/**
+ * Bandwidth statistics broken down by time period
+ * All values are in bytes
+ *
+ * @property {number} day_bytes - Total bandwidth used in last 24 hours
+ * @property {number} week_bytes - Total bandwidth used in last 7 days
+ * @property {number} month_bytes - Total bandwidth used in last 30 days
+ * @property {number} total_bytes - Total bandwidth used since start
+ */
+export interface BandwidthStats {
+  day_bytes: number;
+  week_bytes: number;
+  month_bytes: number;
+  total_bytes: number;
+}
+
+/**
+ * Stats for message processing since service started
+ *
+ * @property {string} started_at - ISO 8601 timestamp when stats tracking started
+ * @property {number} uptime_in_seconds - Service uptime in seconds
+ * @property {number} avg_process_time_ms - Average message processing time in milliseconds
+ */
+export interface SinceStartStats {
+  started_at: string;
+  uptime_in_seconds: number;
+  avg_process_time_ms: number;
+}
+
+/**
+ * Complete stats response from API
+ * Contains message processing statistics and bandwidth metrics
+ *
+ * @property {number} processed_count - Total number of messages processed
+ * @property {number} success_count - Total number of successful deliveries
+ * @property {number} failed_count - Total number of failed deliveries
+ * @property {string} last_processed_at - ISO 8601 timestamp of last processed message
+ * @property {string} last_failed_at - ISO 8601 timestamp of last failed message
+ * @property {number} queue_depth - Current number of messages in queue
+ * @property {SinceStartStats} since_start - Metrics since service started
+ * @property {BandwidthStats} bandwidth - Bandwidth usage broken down by time period
+ */
+export interface StatsResponse {
+  processed_count: number;
+  success_count: number;
+  failed_count: number;
+  last_processed_at: string;
+  last_failed_at: string;
+  queue_depth: number;
+  since_start: SinceStartStats;
+  bandwidth: BandwidthStats;
 }
