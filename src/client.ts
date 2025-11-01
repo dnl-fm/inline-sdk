@@ -272,34 +272,34 @@ export class InlineClient {
     // Determine request method (default: POST unless method is specified)
     const httpMethod = options?.method ? options.method.toUpperCase() : "POST";
 
-    // For GET requests, use headers instead of body
+    // For GET requests, pass scheduling parameters as query params in URL
     if (httpMethod === "GET") {
-      const headers: Record<string, string> = {};
+      const query: Record<string, string> = {};
 
       if (options?.delay) {
-        headers["Queue-Delay"] = options.delay;
+        query["Queue-Delay"] = options.delay;
       }
       if (options?.notBefore) {
-        headers["Queue-notBefore"] = options.notBefore;
+        query["Queue-notBefore"] = options.notBefore;
       }
       if (options?.timezone) {
-        headers["Queue-timezone"] = options.timezone;
+        query["Queue-timezone"] = options.timezone;
       }
       if (options?.method) {
-        headers["Queue-Method"] = httpMethod;
+        query["Queue-Method"] = httpMethod;
       }
 
-      // Add Queue-Forward-* headers for custom headers
+      // Add Queue-Forward-* query params for custom headers
       if (options?.headers) {
         Object.entries(options.headers).forEach(([key, value]) => {
-          headers[`Queue-Forward-${key}`] = value;
+          query[`Queue-Forward-${key}`] = value;
         });
       }
 
       return this.request<CreateMessageResponse>(
         "GET",
         `/publish/${encodedUrl}`,
-        headers && Object.keys(headers).length > 0 ? { headers } : undefined,
+        Object.keys(query).length > 0 ? { query } : undefined,
       );
     }
 
