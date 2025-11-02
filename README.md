@@ -35,6 +35,7 @@
   - [Message Retrieval](#message-retrieval)
   - [Timeline and History](#timeline-and-history-api)
   - [Message Retry](#message-retry)
+  - [Message Cancellation](#message-cancellation)
   - [Health and Status](#health-and-status)
   - [Error Monitoring](#error-monitoring)
   - [Debug Endpoints](#debug-endpoints)
@@ -626,6 +627,46 @@ if (result.success) {
 
 ---
 
+### Message Cancellation
+
+#### cancelMessage()
+
+Cancel a pending message before it's processed. Once cancelled, the message will not be delivered to the callback endpoint.
+
+```typescript
+cancelMessage(messageId: string): Promise<MessageResponse>
+```
+
+**Parameters:**
+- `messageId` (string, required) - ULID of the message to cancel
+
+**Returns:** `MessageResponse` with status set to `"cancelled"`
+
+**Throws:**
+- `ValidationError` - If messageId is empty
+- `NotFoundError` - If message doesn't exist
+- `InvalidStateError` - If message is not in `pending` status (only pending messages can be cancelled)
+
+**Example:**
+```typescript
+try {
+  const result = await client.cancelMessage('message_123');
+  console.log(`Cancelled: ${result.id}`);
+  console.log(`Status: ${result.status}`); // 'cancelled'
+} catch (error) {
+  if (error instanceof InvalidStateError) {
+    console.error('Cannot cancel non-pending message');
+  }
+}
+```
+
+**Constraints:**
+- Only `pending` messages can be cancelled
+- Once a message is `processing`, `completed`, `failed`, or `dead_letter`, it cannot be cancelled
+- Cancelled messages are recorded in the timeline with a `MESSAGE_CANCELLED` event
+
+---
+
 ### Health and Status
 
 #### getHealth()
@@ -865,7 +906,7 @@ console.log(`Location: ${stats.location}`);
 
 ```typescript
 // Message status in the queue
-type MessageStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'dead_letter';
+type MessageStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'dead_letter' | 'cancelled';
 
 // Event types in timeline
 type EventType = 'MESSAGE_RECEIVED' | 'MESSAGE_SCHEDULED' | 'DELIVERY_ATTEMPT'
