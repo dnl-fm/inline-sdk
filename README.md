@@ -1,5 +1,14 @@
 # Inline SDK - TypeScript Client for Message Queue API
 
+```
+██╗███╗   ██╗██╗     ██╗███╗   ██╗███████╗
+██║████╗  ██║██║     ██║████╗  ██║██╔════╝
+██║██╔██╗ ██║██║     ██║██╔██╗ ██║█████╗
+██║██║╚██╗██║██║     ██║██║╚██╗██║██╔══╝
+██║██║ ╚████║███████╗██║██║ ╚████║███████╗
+╚═╝╚═╝  ╚═══╝╚══════╝╚═╝╚═╝  ╚═══╝╚══════╝
+```
+
 > A complete, type-safe TypeScript SDK for the Inline message queue service. Publish messages, manage delivery, and query system status with full TypeScript support.
 
 **Version:** 0.2.1 | **License:** MIT
