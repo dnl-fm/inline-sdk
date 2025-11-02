@@ -8,13 +8,15 @@
  * - `completed`: Message successfully delivered
  * - `failed`: Message failed to deliver but still has retries
  * - `dead_letter`: Message permanently failed after all retries exhausted
+ * - `cancelled`: Message was cancelled by user before processing
  */
 export type MessageStatus =
   | "pending"
   | "processing"
   | "completed"
   | "failed"
-  | "dead_letter";
+  | "dead_letter"
+  | "cancelled";
 
 /**
  * Error codes for failed message deliveries

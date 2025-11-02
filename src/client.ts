@@ -486,6 +486,36 @@ export class InlineClient {
   }
 
   /**
+   * Cancel a pending message before it's processed
+   *
+   * Only messages with `pending` status can be cancelled.
+   * Once cancelled, the message will not be delivered to the callback.
+   *
+   * @async
+   * @param {string} messageId - The ID of the message to cancel
+   * @returns {Promise<MessageResponse>} The updated message with cancelled status
+   * @throws {ValidationError} If messageId is empty
+   * @throws {NotFoundError} If message doesn't exist
+   * @throws {InvalidStateError} If message is not in pending state
+   * @throws {InlineError} On other errors
+   *
+   * @example
+   * const result = await client.cancelMessage('msg_123abc');
+   * console.log(`Cancelled: ${result.id}`);
+   * console.log(`Status: ${result.status}`); // 'cancelled'
+   */
+  async cancelMessage(messageId: string): Promise<MessageResponse> {
+    if (!messageId) {
+      throw new ValidationError("messageId is required");
+    }
+
+    return this.request<MessageResponse>(
+      "DELETE",
+      `/messages/${messageId}`,
+    );
+  }
+
+  /**
    * Check the health status of the API and its components
    *
    * @async
