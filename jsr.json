@@ -1,6 +1,6 @@
 {
   "name": "@dnl-fm/inline-sdk",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "exports": "./src/index.ts",
   "publish": {
     "include": ["src/**/*.ts", "README.md", "LICENSE"]
