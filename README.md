@@ -1,22 +1,12 @@
 # Inline SDK - TypeScript Client for Message Queue API
 
 ```
-IIIIIIIIIINNNNNNNN        NNNNNNNNLLLLLLLLLLL             IIIIIIIIIINNNNNNNN        NNNNNNNNEEEEEEEEEEEEEEEEEEEEEE
-I::::::::IN:::::::N       N::::::NL:::::::::L             I::::::::IN:::::::N       N::::::NE::::::::::::::::::::E
-I::::::::IN::::::::N      N::::::NL:::::::::L             I::::::::IN::::::::N      N::::::NE::::::::::::::::::::E
-II::::::IIN:::::::::N     N::::::NLL:::::::LL             II::::::IIN:::::::::N     N::::::NEE::::::EEEEEEEEE::::E
-  I::::I  N::::::::::N    N::::::N  L:::::L                 I::::I  N::::::::::N    N::::::N  E:::::E       EEEEEE
-  I::::I  N:::::::::::N   N::::::N  L:::::L                 I::::I  N:::::::::::N   N::::::N  E:::::E
-  I::::I  N:::::::N::::N  N::::::N  L:::::L                 I::::I  N:::::::N::::N  N::::::N  E::::::EEEEEEEEEE
-  I::::I  N::::::N N::::N N::::::N  L:::::L                 I::::I  N::::::N N::::N N::::::N  E:::::::::::::::E
-  I::::I  N::::::N  N::::N:::::::N  L:::::L                 I::::I  N::::::N  N::::N:::::::N  E:::::::::::::::E
-  I::::I  N::::::N   N:::::::::::N  L:::::L                 I::::I  N::::::N   N:::::::::::N  E::::::EEEEEEEEEE
-  I::::I  N::::::N    N::::::::::N  L:::::L                 I::::I  N::::::N    N::::::::::N  E:::::E
-  I::::I  N::::::N     N:::::::::N  L:::::L         LLLLLL  I::::I  N::::::N     N:::::::::N  E:::::E       EEEEEE
-II::::::IIN::::::N      N::::::::NLL:::::::LLLLLLLLL:::::LII::::::IIN::::::N      N::::::::NEE::::::EEEEEEEE:::::E
-I::::::::IN::::::N       N:::::::NL::::::::::::::::::::::LI::::::::IN::::::N       N:::::::NE::::::::::::::::::::E
-I::::::::IN::::::N        N::::::NL::::::::::::::::::::::LI::::::::IN::::::N        N::::::NE::::::::::::::::::::E
-IIIIIIIIIINNNNNNNN         NNNNNNNLLLLLLLLLLLLLLLLLLLLLLLLIIIIIIIIIINNNNNNNN         NNNNNNNEEEEEEEEEEEEEEEEEEEEEE
+██╗███╗   ██╗██╗     ██╗███╗   ██╗███████╗
+██║████╗  ██║██║     ██║████╗  ██║██╔════╝
+██║██╔██╗ ██║██║     ██║██╔██╗ ██║█████╗
+██║██║╚██╗██║██║     ██║██║╚██╗██║██╔══╝
+██║██║ ╚████║███████╗██║██║ ╚████║███████╗
+╚═╝╚═╝  ╚═══╝╚══════╝╚═╝╚═╝  ╚═══╝╚══════╝
 ```
 
 > A complete, type-safe TypeScript SDK for the Inline message queue service. Publish messages, manage delivery, and query system status with full TypeScript support.
