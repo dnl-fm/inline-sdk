@@ -213,7 +213,7 @@ const response = await client.publish(
   'https://webhook.example.com/events',
   { event: 'order.shipped', orderId: 456 },
   {
-    delay: '5m' // Can use: ms, s, m, h, d
+    delay: '5m' // Supported units: ms, s, m, h, d
   }
 );
 ```

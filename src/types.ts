@@ -376,7 +376,7 @@ export interface InlineClientConfig {
  * @typedef {Object} PublishOptions
  * @property {CallbackHeaders} [headers] - Custom HTTP headers to forward with callback (sent as Queue-Forward-* headers)
  * @property {string} [delay] - Relative delay before delivery (e.g., "5m", "1h", "30s", "2d")
- *   - Units: `ms`, `s`, `sec`, `m`, `min`, `h`, `hour`, `d`, `day`
+ *   - Supported units: `ms`, `s`, `m`, `h`, `d`
  *   - Cannot be combined with `notBefore`
  * @property {string} [notBefore] - ISO 8601 absolute scheduling datetime for message delivery
  *   - Full format with timezone: `2024-10-21T14:30:00Z` or `2024-10-21T14:30:00-05:00`
