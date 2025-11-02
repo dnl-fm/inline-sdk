@@ -9,6 +9,7 @@ import type {
   RetryMessageResponse,
   HealthStatus,
   HealthReadyResponse,
+  VerifyTokenResponse,
   StatsResponse,
   ErrorStatsResponse,
   DeadLetterResponse,
@@ -673,6 +674,24 @@ export class InlineClient {
       errors: CallbackError[];
     }>("GET", `/errors/message/${messageId}`);
     return response.errors;
+  }
+
+  /**
+   * Verify that the authentication token is valid
+   *
+   * @async
+   * @returns {Promise<VerifyTokenResponse>} Response indicating if token is valid
+   * @throws {AuthenticationError} If token is invalid
+   * @throws {InlineError} On other errors
+   *
+   * @example
+   * const result = await client.verifyToken();
+   * if (result.valid) {
+   *   console.log('Token is valid');
+   * }
+   */
+  async verifyToken(): Promise<VerifyTokenResponse> {
+    return await this.request<VerifyTokenResponse>("GET", "/verify-token");
   }
 }
 

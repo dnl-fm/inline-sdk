@@ -243,6 +243,16 @@ export interface HealthStatus {
 }
 
 /**
+ * Token verification response
+ * Returned when verifying that an authentication token is valid
+ *
+ * @property {boolean} valid - Whether the provided token is valid
+ */
+export interface VerifyTokenResponse {
+  valid: boolean;
+}
+
+/**
  * Error information for a failed callback delivery
  * Captures details about why a callback attempt failed
  *
