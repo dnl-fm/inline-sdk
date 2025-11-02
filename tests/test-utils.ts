@@ -114,6 +114,15 @@ export function createMockMessage(
   };
 }
 
+export function createMockCancelledMessage(
+  overrides?: Partial<MessageResponse>,
+): MessageResponse {
+  return createMockMessage({
+    status: "cancelled",
+    ...overrides,
+  });
+}
+
 export function createMockMessagePublic(
   overrides?: Partial<CreateMessageResponse>,
 ): CreateMessageResponse {
